@@ -45,7 +45,7 @@ void getImageFromDisplay(std::vector<uint8_t>& Pixels, int& Width, int& Height, 
 
 int main(int argc, char *argv[])
 {
-  ros::init(argc, argv, "ets2_ros_bridge_node");
+  ros::init(argc, argv, "ets2_image_publisher_node");
   ros::NodeHandle nh("~");
   image_transport::ImageTransport it(nh);
   image_transport::Publisher image_pub = it.advertise(ros::this_node::getName()+"/image", 10);
