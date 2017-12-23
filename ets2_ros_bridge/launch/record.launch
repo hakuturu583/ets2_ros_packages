@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<launch>
+  <node name="ets2_image_publisher_node" pkg="ets2_ros_bridge" type="ets2_image_publisher_node" args="" output="screen" respawn="true">
+  </node>
+
+  <node name="image_view2" pkg="image_view2" type="image_view2" args="image:=/ets2_image_publisher_node/image" output="screen" respawn="true">
+  </node>
+
+  <node name="joy_node" pkg="joy" type="joy_node" args="" output="screen" respawn="true">
+  </node>
+
+<!--
+  <node name="rosbag_node" pkg="rosbag" type="record" args="-O $(find ets2_ros_bridge)/data/log.bag /ets2_image_publisher_node/image /joy" output="screen" respawn="true">
+  </node>
+-->
+
+  <rosparam command="load" file="$(find ets2_ros_bridge)/config/parameters.yaml"/>
+</launch>

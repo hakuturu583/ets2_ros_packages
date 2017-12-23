@@ -64,9 +64,10 @@ int main(int argc, char *argv[])
   {
     getImageFromDisplay(Pixels, Width, Height, Bpp, Xid);
     cv::Mat img = cv::Mat(Height, Width, Bpp > 24 ? CV_8UC4 : CV_8UC3, &Pixels[0]);
-    std::vector<uchar> buf;
-    cv::imencode(".jpg", img, buf);
-    img = cv::imdecode(cv::Mat(buf), 1);
+    //std::vector<uchar> buf;
+    //cv::imencode(".jpg", img, buf);
+    //img = cv::imdecode(cv::Mat(buf), 1);
+    cv::cvtColor(img, img, CV_RGBA2RGB);
     sensor_msgs::ImagePtr msg = cv_bridge::CvImage(std_msgs::Header(), "bgr8", img).toImageMsg();
     image_pub.publish(msg);
     rate.sleep();
