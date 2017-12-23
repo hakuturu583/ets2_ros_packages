@@ -9,10 +9,8 @@
   <node name="joy_node" pkg="joy" type="joy_node" args="" output="screen" respawn="true">
   </node>
 
-<!--
   <node name="rosbag_node" pkg="rosbag" type="record" args="-O $(find ets2_ros_bridge)/data/log.bag /ets2_image_publisher_node/image /joy" output="screen" respawn="true">
   </node>
--->
 
   <rosparam command="load" file="$(find ets2_ros_bridge)/config/parameters.yaml"/>
 </launch>

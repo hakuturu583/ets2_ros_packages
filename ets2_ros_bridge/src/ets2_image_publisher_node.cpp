@@ -20,27 +20,18 @@
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
 
-void getImageFromDisplay(std::vector<uint8_t>& Pixels, int& Width, int& Height, int& BitsPerPixel,XID xid)
+void getImageFromDisplay(Display* display,std::vector<uint8_t>& Pixels, int& Width, int& Height, int& BitsPerPixel,XID xid)
 {
-  Display* display = XOpenDisplay(nullptr);
-  //Window root = DefaultRootWindow(display);
-
   XCompositeRedirectWindow(display, xid, CompositeRedirectAutomatic);
-
   XWindowAttributes attributes = {0};
   XGetWindowAttributes(display, xid, &attributes);
-
   Width = attributes.width;
   Height = attributes.height;
-
   XImage* img = XGetImage(display, xid, 0, 0 , Width, Height, AllPlanes, ZPixmap);
   BitsPerPixel = img->bits_per_pixel;
   Pixels.resize(Width * Height * 4);
-
   memcpy(&Pixels[0], img->data, Pixels.size());
-
   XDestroyImage(img);
-  XCloseDisplay(display);
 }
 
 int main(int argc, char *argv[])
@@ -53,16 +44,17 @@ int main(int argc, char *argv[])
   int Height = 768;
   int Bpp = 0;
   std::vector<std::uint8_t> Pixels;
-  ros::Rate rate(10);
+  ros::Rate rate(30);
   std::string window_id;
   nh.getParam(ros::this_node::getName()+"/window_id", window_id);
   ROS_INFO_STREAM("window_id = " << window_id);
   int window_id_int;
   sscanf(window_id.c_str(), "%x", &window_id_int);
   XID Xid = window_id_int;
+  Display* display = XOpenDisplay(nullptr);
   while(ros::ok())
   {
-    getImageFromDisplay(Pixels, Width, Height, Bpp, Xid);
+    getImageFromDisplay(display, Pixels, Width, Height, Bpp, Xid);
     cv::Mat img = cv::Mat(Height, Width, Bpp > 24 ? CV_8UC4 : CV_8UC3, &Pixels[0]);
     //std::vector<uchar> buf;
     //cv::imencode(".jpg", img, buf);
@@ -72,5 +64,6 @@ int main(int argc, char *argv[])
     image_pub.publish(msg);
     rate.sleep();
   }
+  XCloseDisplay(display);
   return 0;
 }
